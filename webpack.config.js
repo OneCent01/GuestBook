@@ -1,3 +1,5 @@
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
   entry: './src/index.jsx',
   module: {
@@ -19,5 +21,10 @@ module.exports = {
   },
   devServer: {
     contentBase: './dist'
-  }
+  },
+  plugins: [
+    new CopyWebpackPlugin([
+        {from:'src/images',to:'images'} 
+    ])
+  ]
 };

@@ -1,7 +1,20 @@
 import React from 'react';
 
+import ContextMenu from './ContextMenu'
+
 // usage: modelApi.dispatch(action)
 import modelApi from '../model/modelApi.js'
+
+const appStyles = {
+	evenFlex: {
+		display: 'flex',
+		justifyContent: 'space-between'
+	},
+	inline: {
+		display: 'inline-block',
+		position: 'relative'
+	}
+}
 
 export default class App extends React.Component {
 	constructor(props) {
@@ -33,26 +46,51 @@ export default class App extends React.Component {
 
 	renderCard(content, styles) {
 		return (
-			<div style={styles} className="Card">{content}</div>
+			<div 
+				style={{
+					width: 'fit-content', 
+					boxShadow: '1px 1px 2px lightgrey', 
+					padding: '12px',
+					margin: 'auto',
+					...styles
+				}} 
+				className="Card"
+			>{content}</div>
 		)
 	}
 
 	renderLogo() {
-
+		return (
+			<img src="./dist/images/tealPurpStarburst.png" height="40"/>
+		)
 	}
 
 	renderAppTitle() {
-
+		return (
+			<div style={{fontSize: '24px', fontWeight: 'bold', margin: 'auto', textAlign: 'center', marginTop: '6px'}}>GuestBook</div>
+		)
 	}
 
 	renderHeader() {
 		return (
-			<div id="Header">
+			<div style={{height: '40px', background: 'navy', color: 'white'}} id="Header">
 				{[
 					this.renderLogo(),
-					this.renderAppTitle(),
-					this.renderSettings()
-				]}
+					<ContextMenu title="Navigation Options" style={{float: 'right', paddingTop: '8px'}} options={[
+						{
+							text: "Settings",
+							onClick: e => {/*when settings modal is developed, need to trigger the display here*/}
+						},
+						{
+							text: "Logout",
+							onClick: e => modelApi.dispatch({type: 'LOGOUT'})
+						}
+					]}/>,
+					this.renderAppTitle()
+				].map((el, i, arr) => {
+					const styles = i === 0 ? {float: 'left', height: '100%'} : {float: 'right', width: `${100 / (arr.length)}%`, height: '100%'}
+					return (<span style={styles}>{el}</span>)
+				})}
 			</div>
 		)
 	}
@@ -64,65 +102,96 @@ export default class App extends React.Component {
 	}
 
 	renderTabs() {
+		const tabs = ['Analytics', 'Patrons', 'Faces']
 		return (
-			null
+			<div style={{height: '100%', width: '150px', background: 'rgb(240,255,255)', borderRight: '1px solid lightgrey', display: 'inline-block'}}>
+				{
+					tabs.map(tab => {
+						
+						const tabStyles = {padding: '8px', fontSize: '20px'}
+						if(this.props.tab === tab) {
+							tabStyles.border = '1px solid lightgrey'
+							tabStyles.background = 'rgb(205,249,249)'
+						} else {
+							tabStyles.cursor = 'pointer'
+						}
+						return (
+							<div 
+								style={tabStyles}
+								onClick={e => modelApi.dispatch({type: 'NAVIGATE', tab: tab})}
+							>
+								{tab}
+							</div>
+						)
+					})
+				}
+			</div>
 		)
 	}
 
 	renderAnalytics() {
 		return (
-			null
+			<div>ANAL HAH</div>
 		)
 	}
 
 	renderPatrons() {
 		return (
-			null
+			<div>CLASSIFIED CUSTOMERS DASHBOARD</div>
 		)
 	}
 
 	renderFacesCatalogue() {
 		return (
-			null
+			<div>LOG OF EVERY RECORDED FACE ENTERING THE STORE</div>
 		)
 	}
 
 	renderTransactions() {
 		return (
-			null
+			<div>LOG OF EVERY TRANSACTION TAKING PLACE IN THE STORE</div>
 		)
 	}
 
 	renderProfile() {
 		return (
-			null
-		)
-	}
-
-	renderSettings() {
-		return (
-			null
+			<div>CUSTOMER PROFILE</div>
 		)
 	}
 
 	renderTabContent() {
 		const tab = this.props.tab
-		return (
-			tab === 'analytics' ? this.renderAnalytics()
-			: tab === 'patrons' ? this.renderPatrons()
-			: tab === 'faces' ? this.renderFacesCatalogue()
-			: tab === 'profile' ? this.renderProfile()
+		return <div style={{display: 'inline-block', position: 'absolute', height: '100%', width: '100%'}}>{(
+			tab === 'Analytics' ? this.renderAnalytics()
+			: tab === 'Patrons' ? this.renderPatrons()
+			: tab === 'Faces' ? this.renderFacesCatalogue()
 			: null
-		)
+		)}</div>
 	}
 
 	renderContent() {
 		return (
-			<div id="Content">
-				{[
-					this.renderTabs(),
-					this.renderTabContent()
-				]}
+			<div id="Content" style={{height: '100%'}}>
+				{this.renderTabs()}
+				{this.renderTabContent()}
+			</div>
+		)
+	}
+
+	renderInput(options) {
+		return (
+			<div style={{...(options.style || {})}}>
+				{options.title ? <div style={{fontSize: '12px'}}>{options.title}</div> : null}
+				<input 
+					style={{width: '100%'}}
+					onFocus={options.onFocus ? options.onFocus : null} 
+					onChange={options.onChange ? options.onChange : null}
+				/>
+				{
+					options.error 
+						? <div style={{fontSize: '10px', color: 'red', fontStyle: 'italic'}}>{options.error}</div>
+						: null
+				}
 			</div>
 		)
 	}
@@ -138,7 +207,7 @@ export default class App extends React.Component {
 
 		const loginContent = (
 			<div id="Login">
-				<form onSubmit={e => {
+				<form style={{width: '400px'}} onSubmit={e => {
 					e.preventDefault()
 
 					// returns a promise, if resolved, the credentials are valid.
@@ -147,37 +216,31 @@ export default class App extends React.Component {
 						.then(this.login)
 						.catch(() => console.log('Invalid login credentials'))
 				}}>
-					<h2>Login</h2>
-					<div>
-						<span>Email</span>
-						<input 
-							onFocus={e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_email'}})} 
-							onChange={e => modelApi.dispatch({type: 'SET_EMAIL', email: e.target.value})}
-						/>
-						{
-							loginErrors.login_email 
-								? <span>ERROR</span>
-								: null
-						}
-					</div>
-					<div>
-						<span>Password</span>
-						<input 
-							onFocus={e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_password'}})} 
-							onChange={e => modelApi.dispatch({type: 'SET_PASSWORD', password: e.target.value})}
-						/>
-						{
-							loginErrors.login_password
-								? <span>ERROR</span>
-								: null
-						}
-					</div>
+					<div style={{fontSize: '24px', fontWeight: 'bold', paddingBottom: '12px'}}>Login</div>
+					{
+						[
+							this.renderInput({
+								title: 'Email',
+								onFocus: e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_email'}}),
+								onChange: e => modelApi.dispatch({type: 'SET_EMAIL', email: e.target.value}),
+								error: loginErrors.login_email,
+								style: {paddingBottom: '12px'}
+							}),
+							this.renderInput({
+								title: 'Password',
+								onFocus: e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_password'}}),
+								onChange: e => modelApi.dispatch({type: 'SET_PASSWORD', password: e.target.value}),
+								error: loginErrors.login_password,
+								style: {paddingBottom: '12px'}
+							})
+						]
+					}
 					<button type="submit">Submit</button>
 				</form>
 			</div>
 		)
 
-		return this.renderCard(loginContent)
+		return this.renderCard(loginContent, {marginTop: '24px'})
 	}
 
 	render() {
@@ -188,7 +251,7 @@ export default class App extends React.Component {
 		)
 
 		return (
-			<div id='App'>
+			<div id='App' style={{height: '100%'}}>
 				{[
 					this.renderHeader(),
 					primaryContent
