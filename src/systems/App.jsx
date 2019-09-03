@@ -245,10 +245,10 @@ export default class App extends React.Component {
 				{
 					// these are just to use for testing the backend server calls...
 					/*
-						<button onClick={e => addUser('anotha.one@gmail.com', '420LOL')}>ADD USER</button>
-						<button onClick={e => getUser({email: 'anotha.one@gmail.com'})}>GET DAT USER</button>
 					*/
 				}
+						<button onClick={e => addUser('anotha.one@gmail.com', '420LOL')}>ADD USER</button>
+						<button onClick={e => getUser({email: 'anotha.one@gmail.com'}).then(res=>console.log('res: ', res)).catch(err => console.log(err))}>GET DAT USER</button>
 			</div>
 		)
 
