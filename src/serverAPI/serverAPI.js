@@ -22,20 +22,17 @@ const addUser = (email, password) => new Promise((resolve, reject) => {
 })
 
 const getUser = (data) => new Promise((resolve, reject) => {
-	const lookup = {
-		key: (
-			data.email ? 'email' 
-			: 'id'
-		),
-		value: (
-			data.email ? data.email 
-			: data.index ? data.index 
-			: 1
-		)
-	}
-	requestUrl = `http://localhost:3000/get-user?${lookup.key}=${lookup.value}`
+	const param = (
+		data.email ? 'email' 
+		: 'id'
+	)
+	const value = (
+		data.email ? data.email 
+		: data.index ? data.index 
+		: 1
+	)
 
-	ajax('GET', requestUrl)
+	ajax('GET', `http://localhost:3000/get-user?${param}=${value}`)
 	.then(res => resolve(res))
 	.catch(err => reject(err))
 })
