@@ -239,7 +239,7 @@ export default class App extends React.Component {
 					}
 					<button type="submit">Submit</button>
 				</form>
-				<button onClick={e => addUser('jmpenney22@gmail.com', '123456')}>ADD USER</button>
+				<button onClick={e => addUser('anotha.one@gmail.com', '420LOL')}>ADD USER</button>
 			</div>
 		)
 

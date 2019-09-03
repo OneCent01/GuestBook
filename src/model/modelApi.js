@@ -3,7 +3,10 @@ const modelTemplate = {
 	email: '',
 	password: '',
 	errors: [],
-	tab: 'Analytics'
+	tab: 'Analytics',
+	faces: [],
+	transactions: [],
+	customers: []
 }
 
 
@@ -18,7 +21,10 @@ const reducers = {
 	SET_PASSWORD: (state, action) => ({...state, password: action.password}),
 	ADD_ERROR: (state, action) => ({...state, errors: [...state.errors, action.error]}),
 	DISMISS_ERROR: (state, action) => ({...state, errors: state.errors.filter(error => error.type !== action.error.type)}),
-	NAVIGATE: (state, action) => ({...state, tab: action.tab})
+	NAVIGATE: (state, action) => ({...state, tab: action.tab}),
+	SET_FACES: (state, action) => ({...state, faces: action.faces}),
+	SET_TRANSACTIONS: (state, action) => ({...state, transactions: action.transactions}),
+	SET_CUSTOMERS: (state, action) => ({...state, customers: action.customers})
 }
 
 const reduce = (state, action) => reducers[action.type] ? reducers[action.type](state, action) : state

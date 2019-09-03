@@ -7,23 +7,16 @@ const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) =
 	request.addEventListener("abort", reject)
 
 	request.open(method, url)
+	request.setRequestHeader("Content-type", "application/json");
 
 	payload 
 		? request.send(payload)
 		: request.send()
 }); 
 
-const createFormData = (dataObj) => {
-  const formData = new FormData()
-  Object.keys(dataObj).forEach(key =>{
-    formData.append(key, dataObj[key])
-  })
-  return formData
-}
-
 const addUser = (email, password) => {
 	const userData = JSON.stringify({ email, password })
-	ajax('POST', 'http://localhost:3000/add-user', userData)
+	ajax('POST', 'http://localhost:3000/add-user', [userData])
 	.then(res => console.log('res :', res))
 	.catch(err => console.log(err))
 
