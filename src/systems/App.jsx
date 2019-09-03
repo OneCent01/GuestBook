@@ -5,6 +5,8 @@ import ContextMenu from './ContextMenu'
 // usage: modelApi.dispatch(action)
 import modelApi from '../model/modelApi.js'
 
+const {addUser} = require('../serverAPI/serverAPI.js')
+
 const appStyles = {
 	evenFlex: {
 		display: 'flex',
@@ -237,6 +239,7 @@ export default class App extends React.Component {
 					}
 					<button type="submit">Submit</button>
 				</form>
+				<button onClick={e => addUser('jmpenney22@gmail.com', '123456')}>ADD USER</button>
 			</div>
 		)
 
