@@ -5,7 +5,10 @@ import ContextMenu from './ContextMenu'
 // usage: modelApi.dispatch(action)
 import modelApi from '../model/modelApi.js'
 
-const {addUser} = require('../serverAPI/serverAPI.js')
+const {
+	addUser,
+	getUser
+} = require('../serverAPI/serverAPI.js')
 
 const appStyles = {
 	evenFlex: {
@@ -239,7 +242,13 @@ export default class App extends React.Component {
 					}
 					<button type="submit">Submit</button>
 				</form>
-				<button onClick={e => addUser('anotha.one@gmail.com', '420LOL')}>ADD USER</button>
+				{
+					// these are just to use for testing the backend server calls...
+					/*
+						<button onClick={e => addUser('anotha.one@gmail.com', '420LOL')}>ADD USER</button>
+						<button onClick={e => getUser({email: 'anotha.one@gmail.com'})}>GET DAT USER</button>
+					*/
+				}
 			</div>
 		)
 
