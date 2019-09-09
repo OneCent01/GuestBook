@@ -1,6 +1,7 @@
 import React from 'react';
 
-import ContextMenu from './ContextMenu'
+import ContextMenu from './components/ContextMenu'
+import InputText from './components/InputText'
 
 // usage: modelApi.dispatch(action)
 import modelApi from '../model/modelApi.js'
@@ -183,23 +184,23 @@ export default class App extends React.Component {
 		)
 	}
 
-	renderInput(options) {
-		return (
-			<div style={{...(options.style || {})}}>
-				{options.title ? <div style={{fontSize: '12px'}}>{options.title}</div> : null}
-				<input 
-					style={{width: '100%'}}
-					onFocus={options.onFocus ? options.onFocus : null} 
-					onChange={options.onChange ? options.onChange : null}
-				/>
-				{
-					options.error 
-						? <div style={{fontSize: '10px', color: 'red', fontStyle: 'italic'}}>{options.error}</div>
-						: null
-				}
-			</div>
-		)
-	}
+	// renderInput(options) {
+	// 	return (
+	// 		<div style={{...(options.style || {})}}>
+	// 			{options.title ? <div style={{fontSize: '12px'}}>{options.title}</div> : null}
+	// 			<input 
+	// 				style={{width: '100%'}}
+	// 				onFocus={options.onFocus ? options.onFocus : null} 
+	// 				onChange={options.onChange ? options.onChange : null}
+	// 			/>
+	// 			{
+	// 				options.error 
+	// 					? <div style={{fontSize: '10px', color: 'red', fontStyle: 'italic'}}>{options.error}</div>
+	// 					: null
+	// 			}
+	// 		</div>
+	// 	)
+	// }
 
 	renderLogin() {
 		const loignErrorTypes = ['login_email', 'login_password']
@@ -222,23 +223,32 @@ export default class App extends React.Component {
 						.catch(() => console.log('Invalid login credentials'))
 				}}>
 					<div style={{fontSize: '24px', fontWeight: 'bold', paddingBottom: '12px'}}>Login</div>
+					<InputText
+						title='Email'
+						onFocus={e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_email'}})}
+						onChange={e => modelApi.dispatch({type: 'SET_EMAIL', email: e.target.value})}
+						error={loginErrors.login_email}
+						style={{paddingBottom: '12px'}}
+					/>
+					<InputText
+						title='Password'
+						onFocus={e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_password'}})}
+						onChange={e => modelApi.dispatch({type: 'SET_PASSWORD', password: e.target.value})}
+						error={loginErrors.login_password}
+						style={{paddingBottom: '12px'}}
+					/>
+
 					{
-						[
-							this.renderInput({
-								title: 'Email',
-								onFocus: e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_email'}}),
-								onChange: e => modelApi.dispatch({type: 'SET_EMAIL', email: e.target.value}),
-								error: loginErrors.login_email,
-								style: {paddingBottom: '12px'}
-							}),
-							this.renderInput({
-								title: 'Password',
-								onFocus: e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_password'}}),
-								onChange: e => modelApi.dispatch({type: 'SET_PASSWORD', password: e.target.value}),
-								error: loginErrors.login_password,
-								style: {paddingBottom: '12px'}
-							})
-						]
+						// [
+						// 	this.renderInput(),
+						// 	this.renderInput({
+						// 		title: 'Password',
+						// 		onFocus: e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_password'}}),
+						// 		onChange: e => modelApi.dispatch({type: 'SET_PASSWORD', password: e.target.value}),
+						// 		error: loginErrors.login_password,
+						// 		style: {paddingBottom: '12px'}
+						// 	})
+						// ]
 					}
 					<button type="submit">Submit</button>
 				</form>
@@ -247,7 +257,7 @@ export default class App extends React.Component {
 					/*
 					*/
 				}
-						<button onClick={e => addUser('anotha.one@gmail.com', '420LOL')}>ADD USER</button>
+						<button onClick={e => addUser('anotha@gmail.com', '420LOL').then(res => console.log('res: ', res)).catch(err => console.log(err))}>ADD USER</button>
 						<button onClick={e => getUser({email: 'anotha.one@gmail.com'}).then(res=>console.log('res: ', res)).catch(err => console.log(err))}>GET DAT USER</button>
 			</div>
 		)

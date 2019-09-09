@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import modelApi from './model/modelApi'
 
-import App from './systems/App'
+import App from './react/systems/App'
 
 
 ReactDOM.render(

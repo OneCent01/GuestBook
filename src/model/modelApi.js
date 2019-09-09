@@ -6,7 +6,8 @@ const modelTemplate = {
 	tab: 'Analytics',
 	faces: [],
 	transactions: [],
-	customers: []
+	customers: [],
+	products: []
 }
 
 
