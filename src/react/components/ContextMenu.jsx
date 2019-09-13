@@ -1,7 +1,7 @@
 import React from 'react';
 
 // usage: modelApi.dispatch(action)
-import modelApi from '../model/modelApi.js'
+import modelApi from '../../model/modelApi.js'
 
 export default class ContextMenu extends React.Component {
 	constructor(props) {

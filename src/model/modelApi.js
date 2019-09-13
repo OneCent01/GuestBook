@@ -3,11 +3,12 @@ const modelTemplate = {
 	email: '',
 	password: '',
 	errors: [],
+	tabs: ['Analytics', 'Activity', 'Products', 'Transactions'],
 	tab: 'Analytics',
 	faces: [],
 	transactions: [],
 	customers: [],
-	products: []
+	products: [],
 }
 
 

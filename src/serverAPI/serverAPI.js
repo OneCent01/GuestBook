@@ -1,4 +1,5 @@
-const crypto = require('crypto');
+// const fs = require('fs')
+const argon2 = require('argon2')
 
 const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) => {
 	const request = new XMLHttpRequest()
@@ -18,25 +19,21 @@ const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) =
 const salt = 'caramel'
 
 const hash = (password) => new Promise((resolve, reject) => {
-	crypto.pbkdf2(
-		password, 
-		salt, 
-		1000, 
-		128, 
-		'sha512', 
-		(err, key) => {
-			(err && err !== null) 
-			? reject(err) 
-			: resolve(key)
-		}
-	)
+	try {
+		argon2.hash(password)
+			.then(resolve)
+			.catch(reject)
+	} catch(e) {
+		reject(e)
+	}
 })
 
 const addUser = (email, password) => new Promise((resolve, reject) => {
-	hash(password).then(hashedPassTypeArray => {
+	hash(password).then(hash => {
+		console.log('ARGON2 HASHED PASS: ', hash)
 		const userData = JSON.stringify({ 
 			email: email, 
-			password: Array.from(hashedPassTypeArray).toString() 
+			password: hash
 		})
 	
 		ajax('POST', 'http://localhost:3000/add-user', [userData])

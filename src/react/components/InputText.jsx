@@ -1,7 +1,7 @@
 import React from 'react';
 
 // usage: modelApi.dispatch(action)
-import modelApi from '../model/modelApi.js'
+import modelApi from '../../model/modelApi.js'
 
 export default class InputText extends React.Component {
 	constructor(props) {
@@ -16,6 +16,7 @@ export default class InputText extends React.Component {
 					style={{width: '100%'}}
 					onFocus={this.props.onFocus ? this.props.onFocus : null} 
 					onChange={this.props.onChange ? this.props.onChange : null}
+					autofocus={this.props.autoFocus ? 'true' : 'false'}
 				/>
 				{
 					this.props.error 

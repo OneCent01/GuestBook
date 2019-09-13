@@ -26,5 +26,8 @@ module.exports = {
     new CopyWebpackPlugin([
         {from:'src/images',to:'images'} 
     ])
-  ]
+  ],
+  node: {
+    fs: 'empty'
+  }
 };
