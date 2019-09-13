@@ -83,8 +83,8 @@ export default class ContextMenu extends React.Component {
 					}
 				}
 			}>
-				<span>{this.props.title}</span>
-				<span>{` ${String.fromCharCode(9660)}`}</span>
+				<span>{`${this.props.title} `}</span>
+				<span style={{fontSize: '10px'}}>{String.fromCharCode(9660)}</span>
 
 				{
 					this.state.open 

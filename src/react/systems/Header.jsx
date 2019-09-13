@@ -21,7 +21,7 @@ export default class Header extends React.Component {
 
 	render() {
 		return (
-			<div style={{height: '40px', background: 'navy', color: 'white'}} id="Header">
+			<div style={{height: '40px', background: 'navy', color: 'white', paddingLeft: '12px', paddingRight: '12px'}} id="Header">
 				{[
 					this.renderLogo(),
 					<ContextMenu title="Navigation Options" style={{float: 'right', paddingTop: '8px'}} options={[
