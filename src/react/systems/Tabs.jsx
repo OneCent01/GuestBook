@@ -2,7 +2,7 @@ import React from 'react'
 
 import modelApi from '../../model/modelApi.js'
 
-const templateStyles = {
+const tabStyles = {
 	main: {
 		height: '100%', 
 		width: '150px', 
@@ -30,18 +30,18 @@ export default class Tabs extends React.Component {
 
 	render() {
 		return (
-			<div style={templateStyles.main}>
+			<div style={tabStyles.main}>
 				{
 					this.props.tabs.map(tab => {
 						const tabStatus = `${this.props.tab === tab ? '' : 'un'}selected`
-						const tabStyles = {
-							...templateStyles.tab,
-							...templateStyles[tabStatus]
+						const styles = {
+							...tabStyles.tab,
+							...tabStyles[tabStatus]
 						}
 
 						return (
 							<div 
-								style={tabStyles}
+								style={styles}
 								onClick={e => modelApi.dispatch({
 									type: 'NAVIGATE', 
 									tab: tab
