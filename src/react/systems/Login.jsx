@@ -2,15 +2,28 @@ import React from 'react';
 
 import modelApi from '../../model/modelApi.js'
 
-
 import InputText from '../components/InputText'
 import Card from '../components/Card'
+
+const loginStyles = {
+	loginForm: {
+		width: '400px'
+	},
+	headerText: {
+		fontSize: '24px', 
+		fontWeight: 'bold', 
+		paddingBottom: '12px'
+	},
+	input: {
+		paddingBottom: '12px'
+	}
+}
 
 export default class Login extends React.Component {
 	constructor(props) {
 		super(props)
 
-		this.validateCredentials = () => new Promise((resolve, reject) => {
+		this.validateLoginFormCredentials = () => new Promise((resolve, reject) => {
 			const errors = []
 
 			if(!this.props.email.length) {
@@ -29,46 +42,73 @@ export default class Login extends React.Component {
 			}
 		})
 
-		this.login = () => {
-			modelApi.dispatch({type: 'SET_AUTHENTICATED'})
-		}		
+		this.login = () => modelApi.dispatch({
+			type: 'SET_AUTHENTICATED'
+		})
+
+		this.getError = targetError => {
+			const error = this.props.errors.find(err => targetError === err.type)
+			return error ? error.value : null
+		}
+
+		this.setEmail = email => modelApi.dispatch({
+			type: 'SET_EMAIL', 
+			email: email
+		})
+		
+		this.setPassword = password => modelApi.dispatch({
+			type: 'SET_PASSWORD', 
+			password: password
+		})
+
+		this.dismissError = type => modelApi.dispatch({
+			type: 'DISMISS_ERROR', 
+			error: { type }
+		})
 	}
 
 	render() {
-		const loignErrorTypes = ['login_email', 'login_password']
-		const loginErrors = this.props.errors.reduce((acc, err) => {
-			if(loignErrorTypes.includes(err.type)) {
-				acc[err.type] = err.value
-			}
-			return acc
-		}, {})
+		const emailError = this.getError('login_email')
+		const passwordError = this.getError('login_password')
+
+		const handleEmailFocus = (
+			emailError !== null 
+				? e => this.dismissError('login_email') 
+				: null
+		)
+		const handlePasswordFocus = (
+			passwordError !== null 
+				? e => this.dismissError('login_password') 
+				: null
+		)
+
+		const handleFormSubmit = e => {
+			e.preventDefault()
+	
+			this.validateLoginFormCredentials()
+				.then(this.login)
+				.catch(() => console.log('Invalid login credentials'))
+		}
+
 		return (
 			<div id="Login" style={this.props.style || {}}>
 				<Card>
-					<form style={{width: '400px'}} onSubmit={e => {
-						e.preventDefault()
-	
-						// returns a promise, if resolved, the credentials are valid.
-						// Otherwise, they are invalid and should have triggered an error
-						this.validateCredentials()
-							.then(this.login)
-							.catch(() => console.log('Invalid login credentials'))
-					}}>
-						<div style={{fontSize: '24px', fontWeight: 'bold', paddingBottom: '12px'}}>Login</div>
+					<form style={loginStyles.loginForm} onSubmit={handleFormSubmit}>
+						<div style={loginStyles.headerText}>Login</div>
 						<InputText
 							autoFocus={true}
 							title='Email'
-							onFocus={e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_email'}})}
-							onChange={e => modelApi.dispatch({type: 'SET_EMAIL', email: e.target.value})}
-							error={loginErrors.login_email}
-							style={{paddingBottom: '12px'}}
+							onFocus={handleEmailFocus}
+							onChange={e => this.setEmail(e.target.value)}
+							error={emailError}
+							style={loginStyles.input}
 						/>
 						<InputText
 							title='Password'
-							onFocus={e => modelApi.dispatch({type: 'DISMISS_ERROR', error: {type: 'login_password'}})}
-							onChange={e => modelApi.dispatch({type: 'SET_PASSWORD', password: e.target.value})}
-							error={loginErrors.login_password}
-							style={{paddingBottom: '12px'}}
+							onFocus={handlePasswordFocus}
+							onChange={e => this.setPassword(e.target.value)}
+							error={passwordError}
+							style={loginStyles.input}
 						/>
 						<button type="submit">Submit</button>
 					</form>

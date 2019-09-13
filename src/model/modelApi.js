@@ -1,4 +1,4 @@
-const modelTemplate = {
+const initState = {
 	authenticated: false,
 	email: '',
 	password: '',
@@ -9,14 +9,12 @@ const modelTemplate = {
 	transactions: [],
 	customers: [],
 	products: [],
+	contextOpen: false
 }
-
-
-let model = {...modelTemplate}
-const subscribers = []
+let model = {...initState}
 
 const reducers = {
-	LOGOUT: (state, action) => ({...modelTemplate}),
+	LOGOUT: (state, action) => ({...initState}),
 	SET_AUTHENTICATED: (state, action) => ({...state, authenticated: true}),
 	UNSET_AUTHENTICATED: (state, action) => ({...state, authenticated: false}),
 	SET_EMAIL: (state, action) => ({...state, email: action.email}),
@@ -26,10 +24,14 @@ const reducers = {
 	NAVIGATE: (state, action) => ({...state, tab: action.tab}),
 	SET_FACES: (state, action) => ({...state, faces: action.faces}),
 	SET_TRANSACTIONS: (state, action) => ({...state, transactions: action.transactions}),
-	SET_CUSTOMERS: (state, action) => ({...state, customers: action.customers})
+	SET_CUSTOMERS: (state, action) => ({...state, customers: action.customers}),
+	OPEN_CONTEXT_MENU: (state, action, next) => ({...state, contextOpen: true}),
+	CLOSE_CONTEXT_MENU: (state, action, next) => ({...state, contextOpen: false})
 }
 
 const reduce = (state, action) => reducers[action.type] ? reducers[action.type](state, action) : state
+
+const subscribers = []
 
 const modelApi = {
 	getState: () => model,

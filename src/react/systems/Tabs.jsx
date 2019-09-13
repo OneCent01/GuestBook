@@ -3,7 +3,14 @@ import React from 'react'
 import modelApi from '../../model/modelApi.js'
 
 const templateStyles = {
-	base: {
+	main: {
+		height: '100%', 
+		width: '150px', 
+		background: 'rgb(240,255,255)', 
+		borderRight: '1px solid lightgrey', 
+		display: 'inline-block'
+	},
+	tab: {
 		padding: '8px', 
 		fontSize: '20px'
 	},
@@ -19,24 +26,26 @@ const templateStyles = {
 export default class Tabs extends React.Component {
 	constructor(props) {
 		super(props)
-
 	}
 
 	render() {
 		return (
-			<div style={{height: '100%', width: '150px', background: 'rgb(240,255,255)', borderRight: '1px solid lightgrey', display: 'inline-block'}}>
+			<div style={templateStyles.main}>
 				{
 					this.props.tabs.map(tab => {
-						
-						const tabStatus = this.props.tab === tab ? 'selected' : 'unselected'
+						const tabStatus = `${this.props.tab === tab ? '' : 'un'}selected`
 						const tabStyles = {
-							...templateStyles.base,
+							...templateStyles.tab,
 							...templateStyles[tabStatus]
 						}
+
 						return (
 							<div 
 								style={tabStyles}
-								onClick={e => modelApi.dispatch({type: 'NAVIGATE', tab: tab})}
+								onClick={e => modelApi.dispatch({
+									type: 'NAVIGATE', 
+									tab: tab
+								})}
 							>
 								{tab}
 							</div>

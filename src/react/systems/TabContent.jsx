@@ -1,7 +1,5 @@
 import React from 'react'
 
-
-
 export default class TabContent extends React.Component {
 	constructor(props) {
 		super(props)

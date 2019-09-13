@@ -1,4 +1,3 @@
-// const fs = require('fs')
 const argon2 = require('argon2')
 
 const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) => {
@@ -16,8 +15,13 @@ const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) =
 		: request.send()
 })
 
-const salt = 'caramel'
-
+// *TODO*
+// should salt the password with a randomly generated string 
+// stored on the server... requires an extra back and forth to 
+// get the salt for a particular use... if the user doesn't exist, 
+// salt should be randomly generated and sent back as to not   
+// provide an indication as to whether or not a particular email   
+// is associated with a user in the system
 const hash = (password) => new Promise((resolve, reject) => {
 	try {
 		argon2.hash(password)
@@ -43,10 +47,8 @@ const addUser = (email, password) => new Promise((resolve, reject) => {
 })
 
 const getUser = (data) => new Promise((resolve, reject) => {
-	const param = (
-		data.email ? 'email' 
-		: 'id'
-	)
+	const param = data.email ? 'email' : 'id'
+
 	const value = (
 		data.email ? data.email 
 		: data.index ? data.index 
@@ -54,8 +56,8 @@ const getUser = (data) => new Promise((resolve, reject) => {
 	)
 
 	ajax('GET', `http://localhost:3000/get-user?${param}=${value}`)
-	.then(res => resolve(res))
-	.catch(err => reject(err))
+		.then(res => resolve(res))
+		.catch(err => reject(err))
 })
 
 module.exports = {
