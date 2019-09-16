@@ -1,5 +1,3 @@
-const argon2 = require('argon2')
-
 const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) => {
 	const request = new XMLHttpRequest()
 
@@ -15,35 +13,26 @@ const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) =
 		: request.send()
 })
 
-// *TODO*
-// should salt the password with a randomly generated string 
-// stored on the server... requires an extra back and forth to 
-// get the salt for a particular use... if the user doesn't exist, 
-// salt should be randomly generated and sent back as to not   
-// provide an indication as to whether or not a particular email   
-// is associated with a user in the system
-const hash = (password) => new Promise((resolve, reject) => {
-	try {
-		argon2.hash(password)
-			.then(resolve)
-			.catch(reject)
-	} catch(e) {
-		reject(e)
-	}
-})
-
 const addUser = (email, password) => new Promise((resolve, reject) => {
-	hash(password).then(hash => {
-		console.log('ARGON2 HASHED PASS: ', hash)
 		const userData = JSON.stringify({ 
 			email: email, 
-			password: hash
+			password: password
 		})
 	
 		ajax('POST', 'http://localhost:3000/add-user', [userData])
 		.then(res => resolve(res))
 		.catch(err => reject(err))
-	})
+})
+
+const authUser = (email, password) => new Promise((resolve, reject) => {
+		const userData = JSON.stringify({ 
+			email: email, 
+			password: password
+		})
+	
+		ajax('POST', 'http://localhost:3000/auth-user', [userData])
+		.then(res => resolve(res))
+		.catch(err => reject(err))
 })
 
 const getUser = (data) => new Promise((resolve, reject) => {
@@ -60,7 +49,10 @@ const getUser = (data) => new Promise((resolve, reject) => {
 		.catch(err => reject(err))
 })
 
-module.exports = {
+const serverApi = {
 	addUser,
-	getUser
+	getUser,
+	authUser
 }
+
+export default serverApi
