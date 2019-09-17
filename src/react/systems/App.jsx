@@ -37,10 +37,12 @@ export default class App extends React.Component {
 		const header = <Header {...this.props}/>
 		const primaryContent = (
 			this.props.authenticated
-				? ([
-					<Tabs {...this.props} tabs={this.props.tabs}/>,
-					<TabContent {...this.props}/>
-				]) 
+				? (
+					<div style={{display: 'flex', height: '100%'}}>
+						<Tabs {...this.props} tabs={this.props.tabs}/>
+						<TabContent {...this.props}/>
+					</div>
+				) 
 				: <Login {...this.props} style={{marginTop: '64px'}}/>
 		)
 

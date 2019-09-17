@@ -1,5 +1,7 @@
 import React from 'react'
 
+import Products from './Products'
+
 export default class TabContent extends React.Component {
 	constructor(props) {
 		super(props)
@@ -8,7 +10,7 @@ export default class TabContent extends React.Component {
 			return (
 				tab === 'Analytics' ? this.renderAnalytics()
 				: tab === 'Activity' ? this.renderActivity()
-				: tab === 'Products' ? this.renderProducts()
+				: tab === 'Products' ? <Products {...this.props}/>
 				: tab === 'Transactions' ? this.renderTransactions()
 				: null
 			)
@@ -24,12 +26,6 @@ export default class TabContent extends React.Component {
 	renderActivity() {
 		return (
 			<div>RECENT ACTIVITY</div>
-		)
-	}
-
-	renderProducts() {
-		return (
-			<div>RENDER SEARCH OF USER'S PRODUCTS, BOUGHT AND SOLD</div>
 		)
 	}
 
@@ -49,9 +45,9 @@ export default class TabContent extends React.Component {
 		const tab = this.props.tab
 		const style = {
 			display: 'inline-block', 
-			position: 'absolute', 
 			height: '100%', 
-			width: '100%'
+			width: '100%',
+			padding: '16px'
 		}
 
 		return (

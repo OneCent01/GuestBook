@@ -3,6 +3,17 @@ const initState = {
 	email: '',
 	password: '',
 	passwordConfirm: '',
+	products: {
+		customerProducts: [],
+		page: 0,
+		selected: null,
+		search: '',
+		filters: [],
+		sort: null,
+		view: 'table' // 'add' || 'detail'
+	},
+	productsView: '',
+	selectedProduct: null,
 	loginView: 'login',
 	errors: [],
 	tabs: ['Analytics', 'Activity', 'Products', 'Transactions'],
@@ -10,7 +21,6 @@ const initState = {
 	faces: [],
 	transactions: [],
 	customers: [],
-	products: [],
 	contextOpen: false
 }
 let model = {...initState}
@@ -31,7 +41,17 @@ const reducers = {
 	OPEN_CONTEXT_MENU: (state, action) => ({...state, contextOpen: true}),
 	CLOSE_CONTEXT_MENU: (state, action) => ({...state, contextOpen: false}),
 	DISPLAY_SIGNUP: (state, action) => ({...state, loginView: 'signup'}),
-	DISPLAY_LOGIN: (state, action) => ({...state, loginView: 'login'})
+	DISPLAY_LOGIN: (state, action) => ({...state, loginView: 'login'}),
+	SELECT_PRODUCT: (state, action) => ({...state, products: {...state.products, selected: action.product_id}}),
+	DESELECT_PRODUCT: (state, action) => ({...state, products: {...state.products, selected: null}}),
+	UPDATE_PRODUCTS_SEARCH: (state, action) => ({...state, products: {...state.products, search: action.search}}),
+	UPDATE_PRODUCTS_FILTER: (state, action) => ({...state, products: {...state.products, filters: [...state.products.filters, action.filter]}}),
+	CLEAR_PRODUCT_FILTERS: (state, action) => ({...state, products: {...state.products, filters: []}}),
+	UPDATE_PRODUCTS_SORT: (state, action) => ({...state, products: {...state.products, sort: action.sort}}),
+	CLEAR_PRODUCTS_SORT: (state, action) => ({...state, products: {...state.products, sort: null}}),
+	SET_PRODUCTS_TABLE_VIEW: (state, action) => ({...state, products: {...state.products, selected: null, view: 'table'}}),
+	SET_PRODUCTS_ADD_VIEW: (state, action) => ({...state, products: {...state.products, selected: null, view: 'add'}}),
+	SET_PRODUCTS_DETAIL_VIEW: (state, action) => ({...state, products: {...state.products, selected: action.selected, view: 'detail'}})
 }
 
 const reduce = (state, action) => reducers[action.type] ? reducers[action.type](state, action) : state
