@@ -9,30 +9,30 @@ const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) =
 	request.setRequestHeader("Content-type", "application/json");
 
 	payload 
-		? request.send(payload)
-		: request.send()
+	? request.send(payload)
+	: request.send()
 })
 
 const addUser = (email, password) => new Promise((resolve, reject) => {
-		const userData = JSON.stringify({ 
-			email: email, 
-			password: password
-		})
+	const userData = JSON.stringify({ 
+		email: email, 
+		password: password
+	})
 	
-		ajax('POST', 'http://localhost:3000/add-user', [userData])
-		.then(res => resolve(res))
-		.catch(err => reject(err))
+	ajax('POST', 'http://localhost:3000/add-user', [userData])
+	.then(resolve)
+	.catch(reject)
 })
 
 const authUser = (email, password) => new Promise((resolve, reject) => {
-		const userData = JSON.stringify({ 
-			email: email, 
-			password: password
-		})
+	const userData = JSON.stringify({ 
+		email: email, 
+		password: password
+	})
 	
-		ajax('POST', 'http://localhost:3000/auth-user', [userData])
-		.then(res => resolve(res))
-		.catch(err => reject(err))
+	ajax('POST', 'http://localhost:3000/auth-user', [userData])
+	.then(resolve)
+	.catch(reject)
 })
 
 const getUser = (data) => new Promise((resolve, reject) => {
@@ -45,8 +45,8 @@ const getUser = (data) => new Promise((resolve, reject) => {
 	)
 
 	ajax('GET', `http://localhost:3000/get-user?${param}=${value}`)
-		.then(res => resolve(res))
-		.catch(err => reject(err))
+	.then(resolve)
+	.catch(reject)
 })
 
 const serverApi = {

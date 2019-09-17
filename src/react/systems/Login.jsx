@@ -19,6 +19,11 @@ const loginStyles = {
 	},
 	input: {
 		paddingBottom: '12px'
+	},
+	floatingInteractable: {
+		cursor: 'pointer',
+		margin: 'auto',
+		width: 'fit-content'
 	}
 }
 
@@ -30,12 +35,41 @@ export default class Login extends React.Component {
 			const errors = []
 
 			if(!this.props.email.length) {
-				errors.push({type: 'login_email', value: 'invalid_email'})
+				errors.push({type: 'login_email', value: 'enter_email'})
 			} 
 
 			if(!this.props.password.length) {
-				errors.push({type: 'login_password', value: 'invalid_password'})
+				errors.push({type: 'login_password', value: 'enter_password'})
 			}
+
+			if(errors.length) {
+				errors.forEach(err => modelApi.dispatch({type: 'ADD_ERROR', error: err}))
+				reject()
+			} else {
+				resolve()
+			}
+		})
+
+		this.validateSignupFormCredentials = () => new Promise((resolve, reject) => {
+			const errors = []
+
+			if(!this.props.email.length) {
+				errors.push({type: 'signup_email', value: 'enter_email'})
+			}
+
+			if(!this.props.password.length) {
+				errors.push({type: 'signup_password', value: 'enter_password'})
+			}
+
+			if(!this.props.passwordConfirm.length) {
+				errors.push({type: 'signup_password_confirm', value: 'invalid_email_confirmation'})
+			}
+
+			if(this.props.password !== this.props.passwordConfirm) {
+				errors.push({type: 'signup_password_confirm', value: 'require_match'})
+			}
+
+			console.log('errors: ', errors)
 
 			if(errors.length) {
 				errors.forEach(err => modelApi.dispatch({type: 'ADD_ERROR', error: err}))
@@ -64,15 +98,37 @@ export default class Login extends React.Component {
 			password: password
 		})
 
+		this.setPasswordConfirm = password => modelApi.dispatch({
+			type: 'SET_PASSWORD_CONFIRMATION',
+			password: password
+		})
+
 		this.dismissError = type => modelApi.dispatch({
 			type: 'DISMISS_ERROR', 
 			error: { type }
 		})
+
+		this.displaySignup = () => modelApi.dispatch({
+			type: 'DISPLAY_SIGNUP'
+		})
+
+		this.displayLogin = () => modelApi.dispatch({
+			type: 'DISPLAY_LOGIN'
+		})
+
+		this.authFail = () => modelApi.dispatch({
+			type: 'ADD_ERROR',
+			error: {
+				type: 'auth_fail',
+				value: 'invalid_credentials'
+			}
+		})
 	}
 
-	render() {
+	renderLoginForm() {
 		const emailError = this.getError('login_email')
 		const passwordError = this.getError('login_password')
+		const authError = this.getError('auth_fail')
 
 		const handleEmailFocus = (
 			emailError !== null 
@@ -80,27 +136,45 @@ export default class Login extends React.Component {
 				: null
 		)
 		const handlePasswordFocus = (
-			passwordError !== null 
-				? e => this.dismissError('login_password') 
-				: null
+			(
+				passwordError !== null 
+				|| authError !== null
+			)
+			? e => {
+				if(passwordError !== null) this.dismissError('login_password')
+				if(authError !== null) this.dismissError('auth_fail')
+			}
+			: null
 		)
 
 		const handleFormSubmit = e => {
 			e.preventDefault()
 	
 			this.validateLoginFormCredentials()
-				.then(this.login)
+				.then(() => {
+					serverApi.authUser(this.props.email, this.props.password)
+					.then(res => {
+						const parsedRes = JSON.parse(res)
+						
+						parsedRes.success
+						? this.login() 
+						: this.authFail()
+
+					})
+					.catch(err => this.authFail())
+				})
 				.catch(() => console.log('Invalid login credentials'))
 		}
 
 		return (
-			<div id="Login" style={this.props.style || {}}>
+			<div id="LoginForm" style={this.props.style || {}}>
 				<Card>
 					<form style={loginStyles.loginForm} onSubmit={handleFormSubmit}>
 						<div style={loginStyles.headerText}>Login</div>
 						<InputText
 							autoFocus={true}
 							title='Email'
+							placeholder='Email Address'
 							onFocus={handleEmailFocus}
 							onChange={e => this.setEmail(e.target.value)}
 							error={emailError}
@@ -108,14 +182,112 @@ export default class Login extends React.Component {
 						/>
 						<InputText
 							title='Password'
+							placeholder='Password'
 							onFocus={handlePasswordFocus}
-							onChange={e => this.setPassword(e.target.value)}
-							error={passwordError}
+							onChange={e => {
+								if(handlePasswordFocus) handlePasswordFocus() // clears errors in case error was pressed to submit
+								
+								this.setPassword(e.target.value)
+							}}
+							error={passwordError || authError}
 							style={loginStyles.input}
 						/>
 						<button type="submit">Submit</button>
 					</form>
 				</Card>
+				<div style={loginStyles.floatingInteractable} onClick={e=>this.displaySignup()}>Signup</div>
+			</div>
+		)
+	}
+
+	renderSignupForm() {
+		const emailError = this.getError('signup_email')
+		const passwordError = this.getError('signup_password')
+		const passwordConfirmError = this.getError('signup_password_confirm')
+
+		const handleEmailFocus = (
+			emailError !== null 
+				? e => this.dismissError('signup_email') 
+				: null
+		)
+		const handlePasswordFocus = (
+			passwordError !== null 
+				? e => this.dismissError('signup_password') 
+				: null
+		)
+		const handlePasswordConfirmFocus = (
+			passwordConfirmError !== null 
+				? e => this.dismissError('signup_password_confirm') 
+				: null
+		)
+
+		const handleSignupSubmit = e => {
+			e.preventDefault()
+
+			this.validateSignupFormCredentials()
+			.then(() => {
+				serverApi.addUser(this.props.email, this.props.password)
+				.then(res => {
+					const parsedRes = JSON.parse(res)
+					if(parsedRes.success) {
+						console.log('USER ADDED: ', parsedRes)
+						this.login()
+					} else {
+						console.log('FAILED TO ADD USER: ', parsedRes.error)
+					}
+				})
+				.catch(err => console.log('FAILED TO ADD USER: ', err))
+
+			})
+			.catch(err => console.log('FAILED TO ADD USER: ', err))
+
+		}
+		return (
+			<div id="SignupForm" style={this.props.style || {}}>
+				<Card>
+					<form style={loginStyles.loginForm} onSubmit={handleSignupSubmit}>
+						<div style={loginStyles.headerText}>Signup</div>
+						<InputText
+							autoFocus={true}
+							title='Email'
+							placeholder='Email Address'
+							onFocus={handleEmailFocus}
+							onChange={e => this.setEmail(e.target.value)}
+							error={emailError}
+							style={loginStyles.input}
+						/>
+						<InputText
+							title='Password'
+							placeholder='Password'
+							onFocus={handlePasswordFocus}
+							onChange={e => this.setPassword(e.target.value)}
+							error={passwordError}
+							style={loginStyles.input}
+						/>
+						<InputText
+							title='PasswordConfirm'
+							placeholder='Confirm Password'
+							onFocus={handlePasswordConfirmFocus}
+							onChange={e => this.setPasswordConfirm(e.target.value)}
+							error={passwordConfirmError}
+							style={loginStyles.input}
+						/>
+						<button type="submit">Submit</button>
+					</form>
+				</Card>
+				<div style={loginStyles.floatingInteractable} onClick={e=>this.displayLogin()}>Back</div>
+			</div>
+		)
+	}
+
+	render() {
+		return (
+			<div id="Login">
+				{
+					this.props.loginView === 'login' ? this.renderLoginForm()
+					: this.props.loginView === 'signup' ? this.renderSignupForm()
+					: null
+				}
 			</div>
 		)
 	}
