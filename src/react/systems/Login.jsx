@@ -1,12 +1,14 @@
 import React from 'react';
 
-import modelApi from '../../model/modelApi.js'
-
 import InputText from '../components/InputText'
 import Card from '../components/Card'
 
+import modelApi from '../../model/modelApi.js'
 import serverApi from '../../serverAPI/serverAPI'
 
+// very simple email format validation ensuring the email is in in the form: _@_._
+// anything more restrictive than that is too opinionated
+const emailIsValid = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
 const loginStyles = {
 	loginForm: {
@@ -36,10 +38,14 @@ export default class Login extends React.Component {
 
 			if(!this.props.email.length) {
 				errors.push({type: 'login_email', value: 'enter_email'})
-			} 
+			} else if(!emailIsValid(this.props.email)) {
+				errors.push({type: 'login_email', value: 'enter_valid_email'})
+			}
 
 			if(!this.props.password.length) {
 				errors.push({type: 'login_password', value: 'enter_password'})
+			} else if(this.props.password.length < 3) {
+				errors.push({type: 'login_password', value: 'minimum_length-3'})
 			}
 
 			if(errors.length) {

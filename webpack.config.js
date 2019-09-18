@@ -2,6 +2,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/index.jsx',
+  mode: 'production',
+  optimization: {
+    minimize: false
+  },
   module: {
     rules: [
       {

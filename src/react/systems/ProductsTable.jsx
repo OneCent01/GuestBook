@@ -21,7 +21,7 @@ export default class ProductsTable extends React.Component {
 		return (
 			<div id="ProductsTable" style={productsTableStyles.main}>
 				<DataTable 
-					data={productsData.customerProducts}
+					data={productsData.userProducts}
 					columns={[
 						{
 							title: 'Name',
@@ -30,7 +30,15 @@ export default class ProductsTable extends React.Component {
 						{
 							title: 'upc',
 							attribute: 'barcode'
-						}
+						},
+						{
+							title: 'Stock',
+							attribute: 'stock'
+						},
+						{
+							title: 'Price',
+							attribute: 'currentPrice'
+						},
 					]}
 					// filter={
 

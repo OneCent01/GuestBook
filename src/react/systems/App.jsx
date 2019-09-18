@@ -26,7 +26,7 @@ export default class App extends React.Component {
 				// if the classesClicked array doesn't include the className Settings, we know there's 
 				// been a window click outside of the settings popup which should close it
 				if(!classesClicked.includes('MenuModal')) {
-					modelApi.dispatch({type: 'CLOSE_CONTEXT_MENU'})
+					modelApi.dispatch({type: 'CLOSE_HEADER_MENU'})
 				}
 				
 			}

@@ -61,7 +61,7 @@ export default class ContextMenu extends React.Component {
 				}}
 				onClick={e => {
 					if(!this.props.contextOpen) {
-						modelApi.dispatch({type: 'OPEN_CONTEXT_MENU'})
+						modelApi.dispatch({type: 'OPEN_HEADER_MENU'})
 					}
 				}
 			}>
