@@ -61,6 +61,7 @@ export default {
 		userProducts: generateProducts(8),
 		page: 0,
 		selected: null,
+		selectedData: null,
 		search: '',
 		filters: [],
 		sort: null,

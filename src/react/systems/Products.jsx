@@ -8,7 +8,7 @@ import AddProduct from './AddProduct'
 
 const productsStyles = {
 	main: {
-
+		height: '100%'
 	},
 	clickable: {
 		cursor: 'pointer'

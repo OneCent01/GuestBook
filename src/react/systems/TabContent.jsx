@@ -47,7 +47,8 @@ export default class TabContent extends React.Component {
 			display: 'inline-block', 
 			height: '100%', 
 			width: '100%',
-			padding: '16px'
+			padding: '16px',
+			overflow: 'scroll'
 		}
 
 		return (

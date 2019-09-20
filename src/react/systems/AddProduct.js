@@ -10,6 +10,9 @@ const addProductStyles = {
 	},
 	clickable: {
 		cursor: 'pointer'
+	},
+	fill: {
+		height: '100%'
 	}
 }
 
@@ -72,6 +75,8 @@ export default class AddProduct extends React.Component {
 			<form onSubmit={e => {
 				e.preventDefault()
 				serverApi.scanProduct(this.refs.barcodeInput.value)
+				.then(data => modelApi.dispatch({type: 'SET_SELECTED_PRODUCT_DATA', data: JSON.parse(data)}))
+				.catch(err => console.log('scanProduct err: ', err))
 			}}>
 				<div>Input barcode:</div>
 				<input ref="barcodeInput"/>
@@ -88,9 +93,31 @@ export default class AddProduct extends React.Component {
 		)
 	}
 
+	renderSelectedDetails() {
+		const productData = this.props.products.selectedData
+		return (
+			<div style={addProductStyles.fill}>
+				<h2>Title: {productData.title}</h2>
+				<div>
+					<ul>
+						<span>Other Titles:</span>
+						{productData.titles.map(title => <li>{title}</li>)}
+					</ul>
+				</div>
+				<div>Category: {productData.Category}</div>
+				<div>Manufacturer: {productData.Manufacturer}</div>
+				<div>Barcode formats: {productData['Barcode Formats']}</div>
+				<div style={addProductStyles.fill}>
+					<div>Images:</div>
+					{productData.images.map(image => <img src={image}/>)}
+				</div>
+			</div>
+		)
+	}
+
 	renderAddMethod() {
 		return (
-			<div>
+			<div style={addProductStyles.fill}>
 				{/*
 					here i need to implement a way to either go back to the method selection, 
 					or directly switch to another method
@@ -101,6 +128,11 @@ export default class AddProduct extends React.Component {
 					: this.state.method === 'webcam' ? this.renderBarcodeWebcamUploader()
 					: null
 				}
+				{
+					this.props.products.selectedData
+					? this.renderSelectedDetails()
+					: null
+				}
 			</div>
 		)
 	}
@@ -109,7 +141,7 @@ export default class AddProduct extends React.Component {
 	render() {
 		const productsData = this.props.products
 		return (
-			<div id="AddProduct" style={addProductStyles.main}>
+			<div id="AddProduct" style={{...addProductStyles.main, ...addProductStyles.fill}}>
 				{
 					this.state.method === null 
 					? this.renderMethodSelection()
