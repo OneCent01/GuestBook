@@ -10,6 +10,7 @@
     "babel-loader": "^8.0.6",
     "c3": "^0.7.8",
     "fs": "0.0.1-security",
+    "quagga": "^0.12.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   },

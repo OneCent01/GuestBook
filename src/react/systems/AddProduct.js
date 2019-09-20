@@ -4,6 +4,8 @@ import modelApi from '../../model/modelApi.js'
 
 import serverApi from '../../serverAPI/serverAPI.js'
 
+const Quagga = require('quagga');
+
 const addProductStyles = {
 	main: {
 
@@ -28,7 +30,8 @@ export default class AddProduct extends React.Component {
 		super(props)
 
 		this.state = {
-			method: null
+			method: null,
+			img: null
 		}
 
 		this.cancelAdd = () => this.setState({method: null})
@@ -37,7 +40,9 @@ export default class AddProduct extends React.Component {
 		this.addWithWebcam = () => this.setState({method: 'webcam'})
 
 		this.lookupBarcode = barcode => {
-
+			serverApi.scanProduct(barcode)
+			.then(data => modelApi.dispatch({type: 'SET_SELECTED_PRODUCT_DATA', data: JSON.parse(data)}))
+			.catch(err => console.log('scanProduct err: ', err))
 		}
 	}
 
@@ -64,8 +69,35 @@ export default class AddProduct extends React.Component {
 	renderBarcodeImagesUploader() {
 		return (
 			<div>
-
 				IMAGES
+				<input type="file" ref="fileInput" onChange={()=>{
+					const files = this.refs.fileInput.files[0]
+					const uploadedUrl = URL.createObjectURL(files)
+					this.setState({
+						img: uploadedUrl
+					}, () => {
+						console.log('Quagga: ', Quagga)
+						Quagga.decodeSingle({
+						    decoder: {
+						        readers: ["code_128_reader"] // List of active readers
+						    },
+						    locate: true, // try to locate the barcode in the image
+						    src: uploadedUrl // or 'data:image/jpg;base64,' + data
+						}, function(result){
+							console.log(result)
+						    // if(result.codeResult) {
+						    //     console.log("result", result.codeResult.code)
+						    // } else {
+						    //     console.log("not detected")
+						    // }
+						})
+					})
+				}}/>
+				{
+					this.state.img
+					? <img src={this.state.img}/>
+					: null
+				}
 			</div>
 		)
 	}
@@ -74,9 +106,7 @@ export default class AddProduct extends React.Component {
 		return (
 			<form onSubmit={e => {
 				e.preventDefault()
-				serverApi.scanProduct(this.refs.barcodeInput.value)
-				.then(data => modelApi.dispatch({type: 'SET_SELECTED_PRODUCT_DATA', data: JSON.parse(data)}))
-				.catch(err => console.log('scanProduct err: ', err))
+				this.lookupBarcode(this.refs.barcodeInput.value)
 			}}>
 				<div>Input barcode:</div>
 				<input ref="barcodeInput"/>
