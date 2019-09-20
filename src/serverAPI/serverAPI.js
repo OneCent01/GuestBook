@@ -49,10 +49,17 @@ const getUser = (data) => new Promise((resolve, reject) => {
 	.catch(reject)
 })
 
+const scanProduct = barcode => new Promise((resolve, reject) => {
+	ajax('GET', `http://localhost:3000/scan-product?barcode=${barcode}`)
+	.then(resolve)
+	.catch(reject)
+})
+
 const serverApi = {
 	addUser,
 	getUser,
-	authUser
+	authUser,
+	scanProduct
 }
 
 export default serverApi

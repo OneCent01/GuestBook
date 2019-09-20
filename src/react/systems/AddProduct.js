@@ -2,6 +2,7 @@ import React from 'react'
 
 import modelApi from '../../model/modelApi.js'
 
+import serverApi from '../../serverAPI/serverAPI.js'
 
 const addProductStyles = {
 	main: {
@@ -31,6 +32,10 @@ export default class AddProduct extends React.Component {
 		this.addWithImages = () => this.setState({method: 'images'})
 		this.addWithInput = () => this.setState({method: 'input'})
 		this.addWithWebcam = () => this.setState({method: 'webcam'})
+
+		this.lookupBarcode = barcode => {
+
+		}
 	}
 
 	renderMethodSelection() {
@@ -64,9 +69,14 @@ export default class AddProduct extends React.Component {
 
 	renderBarcodeInputUploader() {
 		return (
-			<div>
-				BARCODE
-			</div>
+			<form onSubmit={e => {
+				e.preventDefault()
+				serverApi.scanProduct(this.refs.barcodeInput.value)
+			}}>
+				<div>Input barcode:</div>
+				<input ref="barcodeInput"/>
+				<button type="submit">Submit!</button>
+			</form>
 		)
 	}
 
