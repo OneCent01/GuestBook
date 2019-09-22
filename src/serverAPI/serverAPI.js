@@ -1,3 +1,5 @@
+const host = 'http://localhost:3000'
+
 const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) => {
 	const request = new XMLHttpRequest()
 
@@ -19,7 +21,7 @@ const addUser = (email, password) => new Promise((resolve, reject) => {
 		password: password
 	})
 	
-	ajax('POST', 'http://localhost:3000/add-user', [userData])
+	ajax('POST', `${host}/add-user`, [userData])
 	.then(resolve)
 	.catch(reject)
 })
@@ -30,7 +32,7 @@ const authUser = (email, password) => new Promise((resolve, reject) => {
 		password: password
 	})
 	
-	ajax('POST', 'http://localhost:3000/auth-user', [userData])
+	ajax('POST', `${host}/auth-user`, [userData])
 	.then(resolve)
 	.catch(reject)
 })
@@ -44,13 +46,13 @@ const getUser = (data) => new Promise((resolve, reject) => {
 		: 1
 	)
 
-	ajax('GET', `http://localhost:3000/get-user?${param}=${value}`)
+	ajax('GET', `${host}/get-user?${param}=${value}`)
 	.then(resolve)
 	.catch(reject)
 })
 
 const scanProduct = barcode => new Promise((resolve, reject) => {
-	ajax('GET', `http://localhost:3000/scan-product?barcode=${barcode}`)
+	ajax('GET', `${host}/scan-product?barcode=${barcode}`)
 	.then(resolve)
 	.catch(reject)
 })
