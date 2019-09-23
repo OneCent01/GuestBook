@@ -4,8 +4,6 @@ import modelApi from '../../model/modelApi.js'
 
 import serverApi from '../../serverAPI/serverAPI.js'
 
-const Quagga = require('quagga');
-
 const addProductStyles = {
 	main: {
 
@@ -66,42 +64,6 @@ export default class AddProduct extends React.Component {
 		])
 	}
 
-	renderBarcodeImagesUploader() {
-		return (
-			<div>
-				IMAGES
-				<input type="file" ref="fileInput" onChange={()=>{
-					const files = this.refs.fileInput.files[0]
-					const uploadedUrl = URL.createObjectURL(files)
-					this.setState({
-						img: uploadedUrl
-					}, () => {
-						console.log('Quagga: ', Quagga)
-						Quagga.decodeSingle({
-						    decoder: {
-						        readers: ["code_128_reader"] // List of active readers
-						    },
-						    locate: true, // try to locate the barcode in the image
-						    src: uploadedUrl // or 'data:image/jpg;base64,' + data
-						}, function(result){
-							console.log(result)
-						    // if(result.codeResult) {
-						    //     console.log("result", result.codeResult.code)
-						    // } else {
-						    //     console.log("not detected")
-						    // }
-						})
-					})
-				}}/>
-				{
-					this.state.img
-					? <img src={this.state.img}/>
-					: null
-				}
-			</div>
-		)
-	}
-
 	renderBarcodeInputUploader() {
 		return (
 			<form onSubmit={e => {
@@ -112,14 +74,6 @@ export default class AddProduct extends React.Component {
 				<input ref="barcodeInput"/>
 				<button type="submit">Submit!</button>
 			</form>
-		)
-	}
-
-	renderBarcodeWebcamUploader() {
-		return (
-			<div>
-				WEBCAM
-			</div>
 		)
 	}
 
@@ -153,9 +107,7 @@ export default class AddProduct extends React.Component {
 					or directly switch to another method
 				*/}
 				{
-					this.state.method === 'images' ? this.renderBarcodeImagesUploader()
-					: this.state.method === 'input' ? this.renderBarcodeInputUploader()
-					: this.state.method === 'webcam' ? this.renderBarcodeWebcamUploader()
+					this.state.method === 'input' ? this.renderBarcodeInputUploader()
 					: null
 				}
 				{

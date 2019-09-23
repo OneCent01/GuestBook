@@ -75,8 +75,6 @@ export default class Login extends React.Component {
 				errors.push({type: 'signup_password_confirm', value: 'require_match'})
 			}
 
-			console.log('errors: ', errors)
-
 			if(errors.length) {
 				errors.forEach(err => modelApi.dispatch({type: 'ADD_ERROR', error: err}))
 				reject()
@@ -85,9 +83,14 @@ export default class Login extends React.Component {
 			}
 		})
 
-		this.login = () => modelApi.dispatch({
-			type: 'SET_AUTHENTICATED'
-		})
+		this.login = () => {
+			serverApi.getUserData()
+			.then(data => console.log('user data: ', data))
+			.catch(err => console.log('something went wrong: ', err))
+			modelApi.dispatch({
+				type: 'SET_AUTHENTICATED'
+			})
+		}
 
 		this.getError = targetError => {
 			const error = this.props.errors.find(err => targetError === err.type)
@@ -122,7 +125,7 @@ export default class Login extends React.Component {
 			type: 'DISPLAY_LOGIN'
 		})
 
-		this.authFail = () => modelApi.dispatch({
+		this.authFail = (err) => modelApi.dispatch({
 			type: 'ADD_ERROR',
 			error: {
 				type: 'auth_fail',
@@ -161,13 +164,15 @@ export default class Login extends React.Component {
 					serverApi.authUser(this.props.email, this.props.password)
 					.then(res => {
 						const parsedRes = JSON.parse(res)
-						
+						const token = parsedRes.token
+						localStorage.setItem('token', token)
+
 						parsedRes.success
 						? this.login() 
 						: this.authFail()
 
 					})
-					.catch(err => this.authFail())
+					.catch(err => this.authFail(err))
 				})
 				.catch(() => console.log('Invalid login credentials'))
 		}
@@ -246,8 +251,8 @@ export default class Login extends React.Component {
 
 			})
 			.catch(err => console.log('FAILED TO ADD USER: ', err))
-
 		}
+
 		return (
 			<div id="SignupForm" style={this.props.style || {}}>
 				<Card>

@@ -8,11 +8,15 @@ const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) =
 	request.addEventListener("abort", reject)
 
 	request.open(method, url)
-	request.setRequestHeader("Content-type", "application/json");
+	request.setRequestHeader("Content-type", "application/json")
 
-	payload 
-	? request.send(payload)
-	: request.send()
+	const token = localStorage.getItem('token')
+	if(token) {
+		request.withCredentials = true
+		request.setRequestHeader('Authorization', token)
+	}
+
+	payload ? request.send(payload) : request.send()
 })
 
 const addUser = (email, password) => new Promise((resolve, reject) => {
@@ -27,26 +31,15 @@ const addUser = (email, password) => new Promise((resolve, reject) => {
 })
 
 const authUser = (email, password) => new Promise((resolve, reject) => {
-	const userData = JSON.stringify({ 
-		email: email, 
-		password: password
-	})
+	const userData = JSON.stringify({ email, password })
 	
 	ajax('POST', `${host}/auth-user`, [userData])
 	.then(resolve)
 	.catch(reject)
 })
 
-const getUser = (data) => new Promise((resolve, reject) => {
-	const param = data.email ? 'email' : 'id'
-
-	const value = (
-		data.email ? data.email 
-		: data.index ? data.index 
-		: 1
-	)
-
-	ajax('GET', `${host}/get-user?${param}=${value}`)
+const getUserData = () => new Promise((resolve, reject) => {
+	ajax('GET', `${host}/user-data`)
 	.then(resolve)
 	.catch(reject)
 })
@@ -59,9 +52,9 @@ const scanProduct = barcode => new Promise((resolve, reject) => {
 
 const serverApi = {
 	addUser,
-	getUser,
 	authUser,
-	scanProduct
+	scanProduct,
+	getUserData
 }
 
 export default serverApi
