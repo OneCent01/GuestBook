@@ -85,11 +85,17 @@ export default class Login extends React.Component {
 
 		this.login = () => {
 			serverApi.getUserData()
-			.then(data => console.log('user data: ', data))
-			.catch(err => console.log('something went wrong: ', err))
-			modelApi.dispatch({
-				type: 'SET_AUTHENTICATED'
+			.then(res => {
+				const parsedRes = typeof res === 'string' ? JSON.parse(res) : res
+				if(parsedRes.success) {
+					modelApi.dispatch({type: 'SET_USER_DATA', data: parsedRes.data})
+				} else {
+					console.log('FUCK, something went wrong: ', parsedRes.errors)
+				}
 			})
+			.catch(err => console.log('FUCK, something went wrong: ', err))
+
+			modelApi.dispatch({ type: 'SET_AUTHENTICATED' })
 		}
 
 		this.getError = targetError => {
@@ -240,12 +246,10 @@ export default class Login extends React.Component {
 				serverApi.addUser(this.props.email, this.props.password)
 				.then(res => {
 					const parsedRes = JSON.parse(res)
-					if(parsedRes.success) {
-						console.log('USER ADDED: ', parsedRes)
-						this.login()
-					} else {
-						console.log('FAILED TO ADD USER: ', parsedRes.error)
-					}
+					
+					parsedRes.success 
+						? this.login()
+						: console.log('FAILED TO ADD USER: ', parsedRes.error)
 				})
 				.catch(err => console.log('FAILED TO ADD USER: ', err))
 

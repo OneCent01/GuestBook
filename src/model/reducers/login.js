@@ -7,4 +7,5 @@ export default {
 	SET_PASSWORD_CONFIRMATION: (state, action) => ({...state, passwordConfirm: action.password}),
 	DISPLAY_SIGNUP: (state, action) => ({...state, loginView: 'signup'}),
 	DISPLAY_LOGIN: (state, action) => ({...state, loginView: 'login'}),
+	SET_USER_DATA: (state, action) => ({...state, ...action.data}),
 }
