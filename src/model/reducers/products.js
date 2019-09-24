@@ -86,12 +86,15 @@ export default {
 	}),
 	ADD_PRODUCT: (state, action, next) => {
 
-		return {...state, products: {
-			...state.products,
-			userProducts: [
-				...state.products.userProducts, 
-				action.product
-			]
-		}}
+		return {
+			...state, 
+			products: {
+				...state.products,
+				userProducts: [
+					...state.products.userProducts, 
+					action.product
+				]
+			}
+		}
 	}
 }

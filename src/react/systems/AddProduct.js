@@ -79,22 +79,23 @@ export default class AddProduct extends React.Component {
 
 	renderSelectedDetails() {
 		const productData = this.props.products.selectedData
+		console.log('productData: ', productData)
 		return (
 			<div style={addProductStyles.fill}>
-				<h2>Title: {productData.title}</h2>
-				<div>
-					<ul>
-						<span>Other Titles:</span>
-						{productData.titles.map(title => <li>{title}</li>)}
-					</ul>
-				</div>
-				<div>Category: {productData.Category}</div>
-				<div>Manufacturer: {productData.Manufacturer}</div>
-				<div>Barcode formats: {productData['Barcode Formats']}</div>
-				<div style={addProductStyles.fill}>
-					<div>Images:</div>
-					{productData.images.map(image => <img src={image}/>)}
-				</div>
+				{/*<h2>Title: {productData.title}</h2>
+								<div>
+									<ul>
+										<span>Other Titles:</span>
+										{productData.titles.map(title => <li>{title}</li>)}
+									</ul>
+								</div>
+								<div>Category: {productData.Category}</div>
+								<div>Manufacturer: {productData.Manufacturer}</div>
+								<div>Barcode formats: {productData['Barcode Formats']}</div>
+								<div style={addProductStyles.fill}>
+									<div>Images:</div>
+									{productData.images.map(image => <img src={image}/>)}
+								</div>*/}
 			</div>
 		)
 	}
@@ -111,9 +112,9 @@ export default class AddProduct extends React.Component {
 					: null
 				}
 				{
-					this.props.products.selectedData
-					? this.renderSelectedDetails()
-					: null
+					// this.props.products.selectedData
+					// ? this.renderSelectedDetails()
+					// : null
 				}
 			</div>
 		)
