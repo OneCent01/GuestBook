@@ -83,5 +83,15 @@ export default {
 			...state.products, 
 			selectedData: action.data
 		}
-	})
+	}),
+	ADD_PRODUCT: (state, action, next) => {
+
+		return {...state, products: {
+			...state.products,
+			userProducts: [
+				...state.products.userProducts, 
+				action.product
+			]
+		}}
+	}
 }
