@@ -1,6 +1,6 @@
 const host = 'http://localhost:3000'
 
-const ajax = (method, url, payload=undefined) => new Promise((resolve, reject) => {
+const fetch = (method, url, payload=undefined) => new Promise((resolve, reject) => {
 	const request = new XMLHttpRequest()
 
 	request.addEventListener("load", e => resolve(e.target.response))
@@ -25,7 +25,7 @@ const addUser = (email, password) => new Promise((resolve, reject) => {
 		password: password
 	})
 	
-	ajax('POST', `${host}/add-user`, [userData])
+	fetch('POST', `${host}/add-user`, [userData])
 	.then(resolve)
 	.catch(reject)
 })
@@ -33,19 +33,26 @@ const addUser = (email, password) => new Promise((resolve, reject) => {
 const authUser = (email, password) => new Promise((resolve, reject) => {
 	const userData = JSON.stringify({ email, password })
 	
-	ajax('POST', `${host}/auth-user`, [userData])
+	fetch('POST', `${host}/auth-user`, [userData])
 	.then(resolve)
 	.catch(reject)
 })
 
 const getUserData = () => new Promise((resolve, reject) => {
-	ajax('GET', `${host}/user-data`)
+	fetch('GET', `${host}/user-data`)
 	.then(resolve)
 	.catch(reject)
 })
 
 const scanProduct = barcode => new Promise((resolve, reject) => {
-	ajax('GET', `${host}/scan-product?barcode=${barcode}`)
+	fetch('GET', `${host}/scan-product?barcode=${barcode}`)
+	.then(resolve)
+	.catch(reject)
+})
+
+const addUserProduct = (barcode, product_id, price, stock=-1) => new Promise((resolve, reject) => {
+	const productData = JSON.stringify({ barcode, product_id, stock })
+	fetch('POST', `${host}/add-user-product`, [productData])
 	.then(resolve)
 	.catch(reject)
 })
@@ -54,7 +61,8 @@ const serverApi = {
 	addUser,
 	authUser,
 	scanProduct,
-	getUserData
+	getUserData,
+	addUserProduct
 }
 
 export default serverApi

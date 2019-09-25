@@ -1,4 +1,5 @@
 import React from 'react'
+import InputText from '../components/InputText'
 
 import modelApi from '../../model/modelApi.js'
 
@@ -78,24 +79,42 @@ export default class AddProduct extends React.Component {
 	}
 
 	renderSelectedDetails() {
-		const productData = this.props.products.selectedData
+		const productData = this.props.products.selectedData.data[0]
 		console.log('productData: ', productData)
 		return (
 			<div style={addProductStyles.fill}>
-				{/*<h2>Title: {productData.title}</h2>
-								<div>
-									<ul>
-										<span>Other Titles:</span>
-										{productData.titles.map(title => <li>{title}</li>)}
-									</ul>
-								</div>
-								<div>Category: {productData.Category}</div>
-								<div>Manufacturer: {productData.Manufacturer}</div>
-								<div>Barcode formats: {productData['Barcode Formats']}</div>
-								<div style={addProductStyles.fill}>
-									<div>Images:</div>
-									{productData.images.map(image => <img src={image}/>)}
-								</div>*/}
+				<h2>Title: {productData.title}</h2>
+				<div>
+					<ul>
+						<span>Other Titles:</span>
+						{/*productData.titles.map(title => <li>{title}</li>)*/}
+					</ul>
+				</div>
+				<div>Category: {productData.category}</div>
+				<div>Manufacturer: {productData.manufacturer}</div>
+				<div>Barcode formats: {productData['Barcode Formats']}</div>
+				
+				<div>
+					<div>Price: </div>
+					<input ref="price"/>
+				</div>
+				<div>
+					<div>Stock: </div>
+					<input ref="stock"/>
+				</div>
+
+				<button onClick={e => {
+					const price = this.refs.price.value
+					const stock = this.refs.stock.value
+					serverApi.addUserProduct(
+						productData.barcode, 
+						productData.id,
+						price,
+						stock.length ? stock : -1
+					)
+					.then(res => console.log('addUserProduct res: ', res))
+					.catch(err => console.log('addUserProduct err: ', err))
+				}}>Add Product!</button>
 			</div>
 		)
 	}
@@ -112,9 +131,9 @@ export default class AddProduct extends React.Component {
 					: null
 				}
 				{
-					// this.props.products.selectedData
-					// ? this.renderSelectedDetails()
-					// : null
+					this.props.products.selectedData
+					? this.renderSelectedDetails()
+					: null
 				}
 			</div>
 		)

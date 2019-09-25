@@ -88,14 +88,57 @@ export default class Login extends React.Component {
 			.then(res => {
 				const parsedRes = typeof res === 'string' ? JSON.parse(res) : res
 				if(parsedRes.success) {
-					modelApi.dispatch({type: 'SET_USER_DATA', data: parsedRes.data})
+					modelApi.dispatch({
+						type: 'SET_USER_DATA', 
+						data: parsedRes.data
+					})
 				} else {
-					console.log('FUCK, something went wrong: ', parsedRes.errors)
+					console.log('FUCK, something went wrong: ', (parsedRes.errors || 'UNKOWN ERROR'))
 				}
 			})
 			.catch(err => console.log('FUCK, something went wrong: ', err))
 
 			modelApi.dispatch({ type: 'SET_AUTHENTICATED' })
+		}
+
+		this.authorizeUser = () => {
+			// send an authentication request with the
+			// same credentials to receive a signed token
+			// for subsequent server calls
+			serverApi.authUser(this.props.email, this.props.password)
+			.then(authRes => {
+				const parsedAuthRes = JSON.parse(authRes)
+			
+				// successful auth, we got the token
+				if(parsedAuthRes.success) {
+					const token = parsedAuthRes.token
+			
+					// set it to local storage for later reading
+					localStorage.setItem('token', token)
+			
+					// request user data, then open the app with 
+					// the user's data:
+					this.login() 
+				} else {
+					this.authFail()
+				}
+			})
+			.catch(err => this.authFail())
+		}
+
+		this.addUser = () => {
+			// if they are, send the login info to the
+			// server and ask it to create a user
+			serverApi.addUser(this.props.email, this.props.password)
+			.then(addRes => {
+				const parsedAddRes = JSON.parse(addRes)
+				
+				// the user was added successfully
+				parsedAddRes.success
+					? this.authorizeUser()
+					: this.authFail()
+			})
+			.catch(this.authFail)
 		}
 
 		this.getError = targetError => {
@@ -135,7 +178,11 @@ export default class Login extends React.Component {
 			type: 'ADD_ERROR',
 			error: {
 				type: 'auth_fail',
-				value: 'invalid_credentials'
+				value: (
+					(err && typeof err === 'string') 
+					? err 
+					: 'invalid_credentials'
+				)
 			}
 		})
 	}
@@ -165,22 +212,10 @@ export default class Login extends React.Component {
 		const handleFormSubmit = e => {
 			e.preventDefault()
 	
+			// make sure the inputs are filled in as expected
 			this.validateLoginFormCredentials()
-				.then(() => {
-					serverApi.authUser(this.props.email, this.props.password)
-					.then(res => {
-						const parsedRes = JSON.parse(res)
-						const token = parsedRes.token
-						localStorage.setItem('token', token)
-
-						parsedRes.success
-						? this.login() 
-						: this.authFail()
-
-					})
-					.catch(err => this.authFail(err))
-				})
-				.catch(() => console.log('Invalid login credentials'))
+				.then(this.authorizeUser)
+				.catch(this.authFail)
 		}
 
 		return (
@@ -241,20 +276,10 @@ export default class Login extends React.Component {
 		const handleSignupSubmit = e => {
 			e.preventDefault()
 
+			// make sure the inputs are filled in as expected
 			this.validateSignupFormCredentials()
-			.then(() => {
-				serverApi.addUser(this.props.email, this.props.password)
-				.then(res => {
-					const parsedRes = JSON.parse(res)
-					
-					parsedRes.success 
-						? this.login()
-						: console.log('FAILED TO ADD USER: ', parsedRes.error)
-				})
-				.catch(err => console.log('FAILED TO ADD USER: ', err))
-
-			})
-			.catch(err => console.log('FAILED TO ADD USER: ', err))
+				.then(this.addUser)
+				.catch(this.authFail)
 		}
 
 		return (
