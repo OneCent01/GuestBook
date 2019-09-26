@@ -40,7 +40,17 @@ export default class AddProduct extends React.Component {
 
 		this.lookupBarcode = barcode => {
 			serverApi.scanProduct(barcode)
-			.then(data => modelApi.dispatch({type: 'SET_SELECTED_PRODUCT_DATA', data: JSON.parse(data)}))
+			.then(data => {
+				data = typeof data === 'string' ?  JSON.parse(data) : data
+				if(data.success) {
+					modelApi.dispatch({
+						type: 'SET_SELECTED_PRODUCT_DATA', 
+						data: data
+					})
+				} else {
+					console.log('SCAN PRODUCT FAILED: ', data)
+				}
+			})
 			.catch(err => console.log('scanProduct err: ', err))
 		}
 	}
