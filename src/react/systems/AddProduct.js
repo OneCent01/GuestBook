@@ -112,7 +112,9 @@ export default class AddProduct extends React.Component {
 						price,
 						stock.length ? stock : -1
 					)
-					.then(res => console.log('addUserProduct res: ', res))
+					.then(res => {
+						console.log('addUserProduct res: ', res)
+					})
 					.catch(err => console.log('addUserProduct err: ', err))
 				}}>Add Product!</button>
 			</div>
