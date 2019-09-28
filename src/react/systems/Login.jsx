@@ -88,6 +88,7 @@ export default class Login extends React.Component {
 			.then(res => {
 				const parsedRes = typeof res === 'string' ? JSON.parse(res) : res
 				if(parsedRes.success) {
+					console.log('getUserData: ', parsedRes)
 					modelApi.dispatch({
 						type: 'SET_USER_DATA', 
 						data: parsedRes.data
